@@ -1,9 +1,9 @@
-package tools_test
+package json_test
 
 import (
 	"testing"
 
-	"github.com/Secure-Petal/tools"
+	"github.com/Secure-Petal/tools/json"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,7 +19,7 @@ func TestGenericUnmarshaller(t *testing.T) {
 		output := User{}
 		errs := make([]error, 0)
 
-		errs = tools.GenericUnmarshaller(input, &output, errs)
+		errs = json.GenericUnmarshaller(input, &output, errs)
 		assert.Equal(t, 0, len(errs))
 
 		assert.Equal(t, "John Doe", output.Name)
@@ -32,7 +32,7 @@ func TestGenericUnmarshaller(t *testing.T) {
 		output := User{}
 		errs := make([]error, 0)
 
-		errs = tools.GenericUnmarshaller(input, &output, errs)
+		errs = json.GenericUnmarshaller(input, &output, errs)
 		assert.Equal(t, 1, len(errs))
 		assert.Equal(t, "unexpected end of JSON input", errs[0].Error())
 	})
@@ -42,7 +42,7 @@ func TestGenericUnmarshaller(t *testing.T) {
 		output := User{}
 		errs := make([]error, 0)
 
-		errs = tools.GenericUnmarshaller(input, output, errs)
+		errs = json.GenericUnmarshaller(input, output, errs)
 		assert.Equal(t, 1, len(errs))
 		assert.Equal(t, "destination is not pointer", errs[0].Error())
 	})
@@ -52,7 +52,7 @@ func TestGenericUnmarshaller(t *testing.T) {
 		output := User{}
 		errs := make([]error, 0)
 
-		errs = tools.GenericUnmarshaller(input, &output, errs)
+		errs = json.GenericUnmarshaller(input, &output, errs)
 		assert.Equal(t, 0, len(errs))
 	})
 }
