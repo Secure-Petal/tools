@@ -17,10 +17,9 @@ func TestGenericUnmarshaller(t *testing.T) {
 	t.Run("valid json to user struct", func(t *testing.T) {
 		input := []byte(`{"name":"John Doe", "age":20, "is_verified":true}`)
 		output := User{}
-		errs := make([]error, 0)
 
-		errs = json.GenericUnmarshaller(input, &output, errs)
-		assert.Equal(t, 0, len(errs))
+		err := json.GenericUnmarshaller(input, &output)
+		assert.Nil(t, err)
 
 		assert.Equal(t, "John Doe", output.Name)
 		assert.Equal(t, 20, output.Age)
@@ -30,29 +29,24 @@ func TestGenericUnmarshaller(t *testing.T) {
 	t.Run("empty slice of byte", func(t *testing.T) {
 		input := make([]byte, 0)
 		output := User{}
-		errs := make([]error, 0)
 
-		errs = json.GenericUnmarshaller(input, &output, errs)
-		assert.Equal(t, 1, len(errs))
-		assert.Equal(t, "unexpected end of JSON input", errs[0].Error())
+		err := json.GenericUnmarshaller(input, &output)
+		assert.Equal(t, "unexpected end of JSON input", err.Error())
 	})
 
 	t.Run("destination is not pointer", func(t *testing.T) {
 		input := []byte(`{"first_name":"John", "age_num":20, "is_active":true}`)
 		output := User{}
-		errs := make([]error, 0)
 
-		errs = json.GenericUnmarshaller(input, output, errs)
-		assert.Equal(t, 1, len(errs))
-		assert.Equal(t, "destination is not pointer", errs[0].Error())
+		err := json.GenericUnmarshaller(input, output)
+		assert.Equal(t, "destination is not pointer", err.Error())
 	})
 
 	t.Run("different fields in JSON, no error", func(t *testing.T) {
 		input := []byte(`{"first_name":"John", "age_num":20, "is_active":true}`)
 		output := User{}
-		errs := make([]error, 0)
 
-		errs = json.GenericUnmarshaller(input, &output, errs)
-		assert.Equal(t, 0, len(errs))
+		err := json.GenericUnmarshaller(input, &output)
+		assert.Nil(t, err)
 	})
 }

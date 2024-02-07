@@ -41,7 +41,7 @@ func getLevel(l string) slog.Level {
 	case "ERROR":
 		return slog.LevelError
 	default:
-		return slog.LevelWarn
+		return slog.LevelDebug
 	}
 }
 
