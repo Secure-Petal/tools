@@ -1,57 +1,43 @@
 package logger
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"sync"
 )
 
 var (
-	theLog   *Logger
+	theLog   *slog.Logger
 	logMutex sync.Mutex
 )
 
-// Logger for our own custom logging over the slog package
-type Logger struct {
-	log *slog.Logger
+type Logger interface {
+	DebugContext(ctx context.Context, msg string, args ...any)
+	InfoContext(ctx context.Context, msg string, args ...any)
+	WarnContext(ctx context.Context, msg string, args ...any)
+	ErrorContext(ctx context.Context, msg string, args ...any)
 }
 
 // InitLogger to initialize logger
-func InitLogger() {
+func InitLogger(level slog.Level) {
 	logMutex.Lock()
 	defer logMutex.Unlock()
 
 	opts := &slog.HandlerOptions{
 		AddSource: true,
-		Level:     getLevel(os.Getenv("LOG_LEVEL")),
+		Level:     level,
 	}
 
 	handler := ContextHandler{slog.NewJSONHandler(os.Stdout, opts)}
-	theLog = &Logger{slog.New(handler)}
-}
-
-func getLevel(l string) slog.Level {
-	switch l {
-	case "DEBUG":
-		return slog.LevelDebug
-	case "INFO":
-		return slog.LevelInfo
-	case "WARN":
-		return slog.LevelWarn
-	case "ERROR":
-		return slog.LevelError
-	default:
-		return slog.LevelDebug
-	}
+	theLog = slog.New(handler)
 }
 
 // GetLogger to get context logger
-func GetLogger() *Logger {
-	if theLog != nil {
-		return theLog
+func GetLogger() Logger {
+	if theLog == nil {
+		panic("logger is nil")
 	}
-
-	InitLogger()
 
 	return theLog
 }
