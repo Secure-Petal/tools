@@ -4,8 +4,8 @@ Tools repository for our services. Publicly available for everyone to improve an
 ## Logger
 Our logger instance is based on `slog` package. To use it:
 ```
-	logger.InitLogger(slog.LevelInfo)
-	logger.GetLogger().InfoContext(context.Background(), "Hello World", "name", "Secure Petal")
+logger.InitLogger(slog.LevelInfo)
+logger.GetLogger().InfoContext(context.Background(), "Hello World", "name", "Secure Petal")
 ```
 
 ## Server
