@@ -2,22 +2,22 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
 // New will create an instance of new http server
-func New(options ...func(*Server)) *Server {
+func New(router http.Handler, options ...func(*Server)) *Server {
 	s := &Server{
-		port:    ":8080",
-		timeout: 5 * time.Second,
+		context:           context.Background(),
+		port:              ":8080",
+		router:            router,
+		readHeaderTimeout: 3 * time.Second,
+		readTimeout:       5 * time.Second,
+		writeTimeout:      8 * time.Second,
+		timeout:           10 * time.Second,
 	}
-
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
-	s.context = ctx
-	s.cancelFunc = stop
 
 	for _, o := range options {
 		o(s)
@@ -26,10 +26,10 @@ func New(options ...func(*Server)) *Server {
 	return s
 }
 
-// WithRouter to assign router
-func WithRouter(r http.Handler) func(*Server) {
+// WithPort to assign port
+func WithPort(port int) func(*Server) {
 	return func(s *Server) {
-		s.router = r
+		s.port = fmt.Sprintf(":%d", port)
 	}
 }
 
